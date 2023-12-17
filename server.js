@@ -19,7 +19,7 @@ const testGet=()=>{
     app.get('*',(req,res)=>{
         const paramsArr=req.url.split('/')
         console.log('paramsArr:',paramsArr)
-        pool.query(`select * from players`)
+        pool.query('select * from players')
         .then(result=>(res.send(result.rows)))
     })
 }
@@ -32,7 +32,11 @@ const newPool=()=>{
         password: process.env.DB_PASSWORD,
         port: process.env.DB_PORT
     }
+    const pool=new pg.Pool(connectionString)
+    return pool
 }
 
 const pool = newPool()
+pool.query('select * from players')
+.then(result=>(console.log(result.rows)))
 init()
