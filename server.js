@@ -16,11 +16,15 @@ const init=()=>{
 }
 
 const testGet=()=>{
-    app.get('*',(req,res)=>{
+    app.get('/players',(req,res)=>{
         const paramsArr=req.url.split('/')
         console.log('paramsArr:',paramsArr)
+        
         pool.query('select * from players')
-        .then(result=>(res.send(result.rows)))
+        .then(result=>{
+            console.log(result.rows)
+            res.send(result.rows)}
+        )
     })
 }
 

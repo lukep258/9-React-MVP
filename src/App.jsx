@@ -1,17 +1,21 @@
-import { useState,useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
+import UsernameInput from './components/UsernameInput'
 
 function App() {
-  const [test,setTest] = useState('')
+  const [user,setUser] = useState('')
+  let playerList = {}
 
   useEffect(()=>{
-    fetch('./api')
+    fetch('./players')
     .then(response=>response.json())
-    .then(data=>console.log(data))
+    .then(data=>data.map((player)=>playerList[player.username]=player))
   },[])
+
   return (
     <div>
-      test
+      <h1>TypeTrain</h1>
+      {user===''&&<UsernameInput playerList={playerList}/>}
     </div>
   )
 }

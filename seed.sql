@@ -16,14 +16,14 @@ create table players(
 
 insert into curr_lobby (pCount) values (2);
 insert into players (username,rank,wpm,sID,lID) values (
-    'testplayer1',
+    'guest3425',
     1,
     60,
     '1a2b3c4d',
     1
 );
 insert into players (username,rank,wpm,sID,lID) values (
-    'testplayer2',
+    'guest6345',
     2,
     60,
     '9z8y7x6w',
