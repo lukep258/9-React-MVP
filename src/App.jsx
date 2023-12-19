@@ -8,8 +8,8 @@ const socket=io()
 function App() {
   const [user,setUser] = useState('')
   const [lobby,setLobby] = useState(null)
+  const [paragraph,setParagraph] = useState('')
   let playerList = {}
-
   
   useEffect(()=>{
     const getPlayers=async()=>{
@@ -36,21 +36,21 @@ function App() {
     }
   })
 
-  socket.on('lobbyJoin',(lobby)=>{
-    setLobby(lobby)
-    console.log(`joining lobby ${lobby}`)
+  socket.on('lobbyJoin',(response)=>{
+    console.log(response[0])
+    setLobby(response[0])
+    setParagraph(response[1])
+    console.log(`joining lobby ${response[0]}, paragraph received`)
   })
 
-  socket.on('paragraphTrans',(paragraph)=>{
-    
-  })
 
   return (
     <div>
       <h1>TypeTrain</h1>
       {user===''?
         <UsernameInput playerList={playerList} setUser={setUser}/>:
-      <Game/>}
+        <Game paragraph={paragraph}/>
+      }
     </div>
   )
 }

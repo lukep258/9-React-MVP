@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import pg from 'pg'
 import http from 'http'
 import { Server } from 'socket.io'
+import randomText from './prideandprejudice.js'
 
 dotenv.config()
 const app=express()
@@ -61,7 +62,8 @@ const socketEvents=()=>{
         if(username!==null){
             const joiningLobby=findLobby()
             currLobbys[joiningLobby].players.push(username)
-            socket.emit('lobbyJoin',joiningLobby)
+            const send = [joiningLobby,randomText()]
+            socket.emit('lobbyJoin',send)
             console.log(`${username} joining lobby ${joiningLobby}`)
         }
 
@@ -70,8 +72,13 @@ const socketEvents=()=>{
             createUser(username,clientIP)
             const joiningLobby=findLobby()
             currLobbys[joiningLobby].players.push(username)
-            socket.emit('lobbyJoin',joiningLobby)
+            const send = [joiningLobby,randomText()]
+            socket.emit('lobbyJoin',send)
             console.log(`${username} joining lobby ${joiningLobby}`)
+        })
+
+        socket.on('test',()=>{
+            socket.emit('good test')
         })
     })
 }
