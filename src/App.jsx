@@ -37,7 +37,6 @@ function App() {
   })
 
   socket.on('lobbyJoin',(response)=>{
-    console.log(response[0])
     setLobby(response[0])
     setParagraph(response[1])
     console.log(`joining lobby ${response[0]}, paragraph received`)

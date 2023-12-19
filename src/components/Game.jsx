@@ -7,7 +7,7 @@ export default function Game(props){
         <div>
             <ProgressDisplay/>
             <Clock/>
-            <Typer paragraph={props.paragraph}/>
+            {props.paragraph&&<Typer paragraph={props.paragraph}/>}
         </div>
     )
 }

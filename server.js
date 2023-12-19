@@ -60,21 +60,13 @@ const socketEvents=()=>{
         const username = await checkIP(clientIP)
         socket.emit('ipCheck',username)
         if(username!==null){
-            const joiningLobby=findLobby()
-            currLobbys[joiningLobby].players.push(username)
-            const send = [joiningLobby,randomText()]
-            socket.emit('lobbyJoin',send)
-            console.log(`${username} joining lobby ${joiningLobby}`)
+            joinLobby(username,socket)
         }
 
         //creating a new user in database
         socket.on('newUser',(username)=>{
             createUser(username,clientIP)
-            const joiningLobby=findLobby()
-            currLobbys[joiningLobby].players.push(username)
-            const send = [joiningLobby,randomText()]
-            socket.emit('lobbyJoin',send)
-            console.log(`${username} joining lobby ${joiningLobby}`)
+            joinLobby(username,socket)
         })
 
         socket.on('test',()=>{
@@ -116,6 +108,14 @@ const findLobby=()=>{
 const createUser=(username,IP)=>{
     pool.query(`insert into players (username,rank,wpm,IP) values ('${username}',0,0,'${IP}')`)
     console.log(`new player user:${username}, IP:${IP}`)
+}
+
+const joinLobby=(username,socket)=>{
+    const joiningLobby=findLobby()
+    currLobbys[joiningLobby].players.push(username)
+    const send = [joiningLobby,randomText()]
+    socket.emit('lobbyJoin',send)
+    console.log(`${username} joining lobby ${joiningLobby}`)
 }
 
 const newPool=()=>{
