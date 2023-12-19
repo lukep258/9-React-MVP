@@ -13,27 +13,24 @@ const io=new Server(server)
 app.use(express.json())
 app.use(express.static('dist'))
 
-const currLobbys={
-    0:{
+const currLobbys=[
+    {
         pCount:2,
-        players:[],
+        players:['guest3425','guest6345'],
         inSession:true
     },
-    1:{
+    {
         pCount:0,
         players:[],
-        inSession:false
+        inSession:true
     }
-}
+]
 
-const activeIP={
-}
 
 const init=()=>{
     socketEvents()
 
     userIP()
-    // addPlayer()
 
     server.listen(port,()=>{console.log(`listening on ${port}`)})
 }
@@ -54,40 +51,64 @@ const userIP=()=>{
     })
 }
 
-const addPlayer=()=>{
-    app.post('/joinLobby',(req,res)=>{
-        const paramsArr=req.url.split('/')
-        console.log('paramsArr:',paramsArr)
-        console.log(req.body)
-
-
-        res.send(`post request:${paramsArr[0]}`)
-    })
-}
-
 const socketEvents=()=>{
-    io.on('connection',(socket)=>{
+    io.on('connection',async(socket)=>{
         const clientIP = socket.handshake.address
 
+        //checking for existing username with IP
+        const username = await checkIP(clientIP)
+        socket.emit('ipCheck',username)
+        if(username!==null){
+            const joiningLobby=findLobby()
+            currLobbys[joiningLobby].players.push(username)
+            socket.emit('lobbyJoin',joiningLobby)
+            console.log(`${username} joining lobby ${joiningLobby}`)
+        }
+
+        //creating a new user in database
         socket.on('newUser',(username)=>{
-            let freeLobby=null
-            let lobbyI=0
-            while(freeLobby===null){
-                if(currLobbys[lobbyI].inSession===false){
-                    freeLobby=lobbyI
-                }
-                lobbyI++
-            }
-            createUser(username,clientIP,freeLobby)
+            createUser(username,clientIP)
+            const joiningLobby=findLobby()
+            currLobbys[joiningLobby].players.push(username)
+            socket.emit('lobbyJoin',joiningLobby)
+            console.log(`${username} joining lobby ${joiningLobby}`)
         })
     })
 }
 
+const checkIP=async(IP)=>{
+    let user
+    await pool.query(`select * from players where IP='${IP}'`)
+    .then(result=>{
+        if(result.rows.length===0){
+            user=null
+        }else{
+            user=result.rows[0].username
+        }
+    })
+    return user
+}
 
-const createUser=(username,IP,lobby)=>{
-    console.log(username,IP,lobby)
-    pool.query(`insert into players (username,rank,wpm,IP,lID) values ('${username}',0,0,'${IP}',${lobby})`)
-    console.log('new player')
+const findLobby=()=>{
+    let freeLobby=null
+    let lobbyI=0
+    while(freeLobby===null){
+        if(currLobbys[lobbyI]===undefined){
+            freeLobby=lobbyI
+            currLobbys.push({pCount:0,players:[],inSession:false})
+        }else{
+            if(currLobbys[lobbyI].inSession===false){
+                freeLobby=lobbyI
+            }
+        }
+        lobbyI++
+    }
+    return freeLobby
+}
+
+const createUser=(username,IP)=>{
+    pool.query(`insert into players (username,rank,wpm,IP) values ('${username}',0,0,'${IP}')`)
+    console.log(`new player user:${username}, IP:${IP}`)
 }
 
 const newPool=()=>{

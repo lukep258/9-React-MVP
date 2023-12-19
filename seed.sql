@@ -6,21 +6,18 @@ create table players(
     username varchar,
     rank integer,
     wpm integer,
-    IP varchar,
-    lID integer references curr_lobby(id)
+    IP varchar
 );
 
-insert into players (username,rank,wpm,IP,lID) values (
+insert into players (username,rank,wpm,IP) values (
     'guest3425',
     1,
     60,
-    '1a2b3c4d',
-    1
+    '1a2b3c4d'
 );
-insert into players (username,rank,wpm,IP,lID) values (
+insert into players (username,rank,wpm,IP) values (
     'guest6345',
     2,
     60,
-    '9z8y7x6w',
-    1
+    '9z8y7x6w'
 );
