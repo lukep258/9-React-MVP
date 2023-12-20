@@ -1,3 +1,5 @@
+import '../App.css'
+
 export default function Typer({paragraph,setParagraph,wordP,setWordP,charP,setCharP,charCount,setCharCount,correctCount,setCorrectCount,setDisplayLB}){
     let textManip=[...paragraph]
     const type=(event)=>{
@@ -41,9 +43,9 @@ export default function Typer({paragraph,setParagraph,wordP,setWordP,charP,setCh
     }
 
     return(
-        <div className="typer">
-            <input onKeyDown={type} autoFocus/>
-            <p>
+        <div>
+            <input placeholder='TYPE HERE' onKeyDown={type} id='textInput' autoFocus/>
+            <div id="text">
                 {/* past words */}
                 {
                     textManip.slice(0,wordP).length>0?
@@ -79,7 +81,7 @@ export default function Typer({paragraph,setParagraph,wordP,setWordP,charP,setCh
                         return wordArr.join('')
                     }).join(' ')
                 }
-            </p>
+            </div>
         </div>
     )
 }

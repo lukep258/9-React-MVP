@@ -141,7 +141,7 @@ const findLobby=()=>{
 }
 
 const createUser=(username,IP)=>{
-    pool.query(`insert into players (username,rank,wpm,IP) values ('${username}',0,0,'${IP}')`)
+    pool.query(`insert into players (username,wpm,IP) values ('${username}',0,'${IP}')`)
     console.log(`new player user:${username}, IP:${IP}`)
 }
 

@@ -3,11 +3,12 @@ import Clock from './Clock'
 import Typer from './Typer'
 
 export default function Game({paragraph,setParagraph,wordP,setWordP,charP,setCharP,charCount,setCharCount,correctCount,setCorrectCount,time,sendProgress,playersProgress,user,setDisplayLB}){
-    if(time>125){
+    if(time>130){
         setDisplayLB(true)
     }
     return(
-        <div>
+        <div id='gameContainer'>
+        <Clock time={time}/>
             <ProgressDisplay
                 wordP={wordP}
                 charCount={charCount}
@@ -17,7 +18,6 @@ export default function Game({paragraph,setParagraph,wordP,setWordP,charP,setCha
                 playersProgress={playersProgress}
                 user={user}
             />
-            <Clock time={time}/>
             {time>=0&&<Typer
                 paragraph={paragraph}
                 setParagraph={setParagraph}

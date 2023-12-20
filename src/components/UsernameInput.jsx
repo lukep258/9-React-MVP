@@ -23,11 +23,13 @@ export default function UsernameInput(props){
         }
     }
     return(
-        <div id="usernameContainer">
+        <div id={"usernameContainer"}>
             <input type="text" 
             placeholder={randomGuest()}
             onKeyUp={submitUser}
-            id="username"/>
+            id={"username"}
+            autoFocus
+            autoComplete='off'/>
         </div>
     )
 }

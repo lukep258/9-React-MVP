@@ -1,3 +1,5 @@
+import "../App.css"
+
 export default function ProgressDisplay({wordP,charCount,correctCount,time,sendProgress,playersProgress,user}){
     let accuracy = correctCount/charCount||0
     let wpm = Math.ceil((wordP*accuracy/time)*60)||0
@@ -11,16 +13,16 @@ export default function ProgressDisplay({wordP,charCount,correctCount,time,sendP
             }
         }
         returnArr = returnArr.map(player=>(
-            <p>{player[0]}: {player[1]} wpm</p>
+            <p className="gameWPM">{player[0]}: {player[1]} wpm</p>
         ))
         return returnArr
     }
 
     return(
         <div>
-            <p>accuracy: {Math.round(accuracy*10000)/100}%</p>
-            <p>you: {wpm} wpm</p>
+            <p className="gameWPM">you: {wpm} wpm</p>
             {mapPlayers()}
+            {wordP>0&&<em id='accuracy'>accuracy: {Math.round(accuracy*10000)/100}%</em>}
         </div>
     )
 }

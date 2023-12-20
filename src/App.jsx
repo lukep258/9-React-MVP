@@ -14,7 +14,7 @@ function App() {
   const [charP,setCharP] = useState(0)
   const [charCount,setCharCount] = useState(0)
   const [correctCount,setCorrectCount] = useState(0)
-  const [time,setTime] = useState(-6)
+  const [time,setTime] = useState(-11)
   const [playersProgress,setPlayersProgress] = useState([])
   const [displayLB,setDisplayLB] = useState(false)
   const [ranks,setRanks] = useState([])
@@ -46,7 +46,7 @@ function App() {
   const checkClock=()=>{
     const currTime = new Date()[Symbol.toPrimitive]('number')
     const timeElapsed = Math.floor((currTime-startTime)/1000)
-    setTime(timeElapsed-5)
+    setTime(timeElapsed-10)
   }
 
   const sendProgress=(wpm)=>{
@@ -54,7 +54,7 @@ function App() {
   }
 
   const playAgain=()=>{
-    setTime(-6)
+    setTime(-11)
     setDisplayLB(false)
     console.log('playing again')
     socket.emit('playAgain',user)
@@ -82,9 +82,9 @@ function App() {
 
   socket.on('startGame',()=>{
     startTime = new Date()[Symbol.toPrimitive]('number')
-    setTime(-5)
+    setTime(-10)
     const clockInterval = setInterval(checkClock,1000)
-    setTimeout(()=>{clearInterval(clockInterval)},125000)
+    setTimeout(()=>{clearInterval(clockInterval)},120000)
     console.log('starting game in 5s')
   })
 
@@ -98,7 +98,19 @@ function App() {
 
   return (
     <div>
-      <div id='titleContainer'><h1 id='title'>TypeTrain</h1></div>
+      <div id='header'>
+          <div id='headerIcon'></div>
+          <strong id='headerText'>TypeTrain</strong>
+          {user===''&&<p id="userInstr">Enter a username</p>}
+      </div>
+      {displayLB===true&&
+            <Leaderboard
+              ranks={ranks}
+              user={user}
+              playAgain={playAgain}
+            />
+      }
+      {user===''&&<div id='titleContainer'><h1 id='title'>TypeTrain</h1></div>}
       {user===''?
         <UsernameInput playerList={playerList} setUser={setUser} sendNewUser={sendNewUser}/>:
           <Game paragraph={paragraph}
@@ -116,13 +128,6 @@ function App() {
             playersProgress={playersProgress}
             user={user}
             setDisplayLB={setDisplayLB}
-            />
-      }
-      {displayLB===true&&
-            <Leaderboard
-              ranks={ranks}
-              user={user}
-              playAgain={playAgain}
             />
       }
     </div>

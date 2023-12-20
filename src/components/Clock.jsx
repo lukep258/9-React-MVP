@@ -1,12 +1,14 @@
+import '../App.css'
+
 export default function Clock({time}){
     return(
-        <div>
+        <div id="clock">
             {
-                time>-5?
+                time>-10?
                     time<0?
-                        <div>{time*(-1)}</div>:
-                        <div>{120-time}s</div>:
-                    <div>0</div>
+                        <p id='time'>starting in: {time*(-1)}s</p>:
+                        <p id='time'>{120-time}s</p>:
+                    <p id='time'>waiting on players</p>
             }
         </div>
     )
