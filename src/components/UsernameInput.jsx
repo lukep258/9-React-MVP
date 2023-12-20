@@ -1,3 +1,5 @@
+import '../App.css'
+
 export default function UsernameInput(props){
     let defaultUser = ''
     const randomGuest=()=>{
@@ -21,10 +23,11 @@ export default function UsernameInput(props){
         }
     }
     return(
-        <div>
+        <div id="usernameContainer">
             <input type="text" 
             placeholder={randomGuest()}
-            onKeyUp={submitUser}/>
+            onKeyUp={submitUser}
+            id="username"/>
         </div>
     )
 }

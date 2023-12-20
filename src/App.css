@@ -31,3 +31,12 @@ h1{
     width:20vw;
     aspect-ratio:1.2;
 }
+#usernameContainer{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+/* #username{
+    margin-left:auto;
+    margin-right:auto;
+} */
