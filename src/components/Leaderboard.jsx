@@ -1,4 +1,4 @@
-export default function Leaderboard({ranks,user}){
+export default function Leaderboard({ranks,user,playAgain}){
     let rank
 
     const mapPlayers=()=>{
@@ -7,19 +7,19 @@ export default function Leaderboard({ranks,user}){
             if(ranks[i].username===user){
                 rank=i
             }
-            returnArr.push(<p>{i} - {ranks[i].username}</p>)
+            returnArr.push([i,ranks[i].username,ranks[i].wpm])
         }
+        returnArr = returnArr.map(arr=>(
+            <p>{arr[0]} - {arr[1]} - {arr[2]}wpm</p>
+        ))
         console.log(returnArr)
         return returnArr
     }
-
     return(
-        <div className="leaderBoard">
+        <div>
             <h3>leaderboard:</h3>
-            <p>rank, username</p>
-            {mapPlayers}
-            <p>{rank}th place</p>
-            <button>Play Again</button>
+            {mapPlayers()}
+            <button onClick={playAgain}>Play Again</button>
         </div>
     )
 }

@@ -1,5 +1,4 @@
-export default function Typer({paragraph,setParagraph,wordP,setWordP,charP,setCharP,charCount,setCharCount,correctCount,setCorrectCount,setDisplayLB,
-    sendFinish={sendFinish}}){
+export default function Typer({paragraph,setParagraph,wordP,setWordP,charP,setCharP,charCount,setCharCount,correctCount,setCorrectCount,setDisplayLB}){
     let textManip=[...paragraph]
     const type=(event)=>{
         if(event.key.length>1&&event.key!=='Backspace'){
@@ -12,7 +11,6 @@ export default function Typer({paragraph,setParagraph,wordP,setWordP,charP,setCh
             console.log(`wordP: ${wordP}, paragraph.length: ${paragraph.length}`)
             if(wordP===paragraph.length){
                 setDisplayLB(true)
-                sendFinish()
             }
             if(charP<paragraph[wordP].length){
                 setCharCount(charCount+(paragraph[wordP].length-charP))

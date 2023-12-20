@@ -20,7 +20,6 @@ function App() {
   const [ranks,setRanks] = useState([])
   let startTime = 0
   let playerList = {}
-  let clockInterval
   
   useEffect(()=>{
     const getPlayers=async()=>{
@@ -46,7 +45,7 @@ function App() {
 
   const checkClock=()=>{
     const currTime = new Date()[Symbol.toPrimitive]('number')
-    const timeElapsed = Math.floor((currTime-startTime)/1000)+125
+    const timeElapsed = Math.floor((currTime-startTime)/1000)
     setTime(timeElapsed-5)
   }
 
@@ -54,7 +53,11 @@ function App() {
     socket.emit('progress',[lobby,user,wpm])
   }
 
-  const sendFinish=()=>{
+  const playAgain=()=>{
+    setTime(-6)
+    setDisplayLB(false)
+    console.log('playing again')
+    socket.emit('playAgain',user)
   }
 
   socket.once('ipCheck',(username)=>{
@@ -73,13 +76,15 @@ function App() {
     setParagraph(paragraph)
 
     setLobby(response[0])
+    setDisplayLB(false)
     console.log(`joining lobby ${response[0]}, paragraph received`)
   })
 
   socket.on('startGame',()=>{
     startTime = new Date()[Symbol.toPrimitive]('number')
     setTime(-5)
-    clockInterval = setInterval(checkClock,1000)
+    const clockInterval = setInterval(checkClock,1000)
+    setTimeout(()=>{clearInterval(clockInterval)},125000)
     console.log('starting game in 5s')
   })
 
@@ -89,13 +94,8 @@ function App() {
 
   socket.on('ranks',(response)=>{
     setRanks(response)
-    console.log(response)
   })
 
-
-  if(displayLB===true){
-    clearInterval(clockInterval)
-  }
   return (
     <div>
       <h1>TypeTrain</h1>
@@ -116,13 +116,13 @@ function App() {
             playersProgress={playersProgress}
             user={user}
             setDisplayLB={setDisplayLB}
-            sendFinish={sendFinish}
             />
       }
       {displayLB===true&&
             <Leaderboard
               ranks={ranks}
               user={user}
+              playAgain={playAgain}
             />
       }
     </div>

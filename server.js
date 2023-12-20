@@ -87,6 +87,15 @@ const socketEvents=()=>{
             )
         })
 
+        socket.on('playAgain',(user)=>{
+            delete currLobbys[room].players[user]
+            socket.leave(room)
+            room = joinLobby(user,socket)
+            dataInterval = setInterval(()=>{
+                io.to(room).emit('progress',currLobbys[room].players)
+            },2000)
+        })
+
         // disconnect closure
         socket.on('disconnect',()=>{
             pool.query(`select username from players where IP='${clientIP}'`)
