@@ -62,7 +62,7 @@ const socketEvents=()=>{
         }
 
         //creating a new user in database
-        socket.on('newUser',(username)=>{
+        socket.once('newUser',(username)=>{
             createUser(username,clientIP)
             room = joinLobby(username,socket)
         })
@@ -73,7 +73,8 @@ const socketEvents=()=>{
         })
 
         socket.on('gameStart',()=>{
-            console.log(room)
+            console.log('gameStart received')
+            console.log(currLobbys[room].players)
             setInterval(()=>{
                 io.to(room).emit('progress',currLobbys[room].players)
             },2000)
@@ -110,7 +111,7 @@ const findLobby=()=>{
     while(freeLobby===null){
         if(currLobbys[lobbyI]===undefined){
             freeLobby=lobbyI
-            currLobbys.push({pCount:0,players:[],inSession:false})
+            currLobbys.push({pCount:0,players:{},inSession:false})
         }else{
             if(currLobbys[lobbyI].inSession===false){
                 freeLobby=lobbyI
@@ -135,9 +136,8 @@ const joinLobby=(username,socket)=>{
     const send = [joiningLobby,randomText()]
     socket.emit('lobbyJoin',send)
     console.log(`${username} joining lobby ${joiningLobby}`)
-    console.log(`lobby players: ${currLobbys[joiningLobby].players}`)
 
-    if(currLobbys[joiningLobby].pCount>0){
+    if(currLobbys[joiningLobby].pCount>1){
         io.to(joiningLobby).emit('startGame')
         setTimeout(()=>{currLobbys[joiningLobby].inSession=true},4000)
         console.log(`starting game in lobby ${joiningLobby} in 5s`)

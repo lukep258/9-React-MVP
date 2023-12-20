@@ -29,12 +29,11 @@ function App() {
     getPlayers()
   },[])
 
-  useEffect(()=>{
-    if(user!==''&&lobby===null){
-      console.log(`creating user: ${user}`)
-      socket.emit('newUser',user)
-    }
-  },[user])
+
+  const sendNewUser=(user)=>{
+    socket.emit('newUser',user)
+    console.log(`sending newUser requesst for username: ${user}`)
+  }
 
   const checkClock=()=>{
     const currTime = new Date()[Symbol.toPrimitive]('number')
@@ -46,7 +45,7 @@ function App() {
     socket.emit('progress',[lobby,user,wpm])
   }
 
-  socket.on('ipCheck',(username)=>{
+  socket.once('ipCheck',(username)=>{
     if(username!==null){
       setUser(username)
       console.log(`IP detected, username set: ${username}`)
@@ -74,7 +73,6 @@ function App() {
   })
 
   socket.on('progress',(response)=>{
-    console.log(response)
     setPlayersProgress(response)
   })
 
@@ -83,7 +81,7 @@ function App() {
       <h1>TypeTrain</h1>
       {
         user===''?
-          <UsernameInput playerList={playerList} setUser={setUser}/>:
+          <UsernameInput playerList={playerList} setUser={setUser} sendNewUser={sendNewUser}/>:
           <Game paragraph={paragraph}
           setParagraph={setParagraph}
           wordP={wordP}

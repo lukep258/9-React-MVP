@@ -11,9 +11,13 @@ export default function UsernameInput(props){
     }
     const submitUser=(event)=>{
         if(event.key==='Enter'){
+            let user
             event.target.value===''?
-                props.setUser(defaultUser):
-                props.setUser(event.target.value)
+                user = defaultUser:
+                user = event.target.value
+            props.setUser(user)
+            console.log(user)
+            props.sendNewUser(user)
         }
     }
     return(
