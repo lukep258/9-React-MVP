@@ -2,7 +2,11 @@ import ProgressDisplay from './ProgressDisplay'
 import Clock from './Clock'
 import Typer from './Typer'
 
-export default function Game({paragraph,setParagraph,wordP,setWordP,charP,setCharP,charCount,setCharCount,correctCount,setCorrectCount,time,sendProgress,playersProgress}){
+export default function Game({paragraph,setParagraph,wordP,setWordP,charP,setCharP,charCount,setCharCount,correctCount,setCorrectCount,time,sendProgress,playersProgress,user,setDisplayLB,sendFinish}){
+    if(time>125){
+        setDisplayLB(true)
+        sendFinish()
+    }
     return(
         <div>
             <ProgressDisplay
@@ -12,6 +16,7 @@ export default function Game({paragraph,setParagraph,wordP,setWordP,charP,setCha
                 time={time}
                 sendProgress={sendProgress}
                 playersProgress={playersProgress}
+                user={user}
             />
             <Clock time={time}/>
             {time>=0&&<Typer
@@ -25,6 +30,8 @@ export default function Game({paragraph,setParagraph,wordP,setWordP,charP,setCha
                 setCharCount={setCharCount}
                 correctCount={correctCount}
                 setCorrectCount={setCorrectCount}
+                setDisplayLB={setDisplayLB}
+                sendFinish={sendFinish}
             />}
         </div>
     )

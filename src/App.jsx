@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import UsernameInput from './components/UsernameInput'
 import Game from './components/Game'
+import Leaderboard from './components/Leaderboard'
 
 const socket=io()
 
@@ -15,8 +16,11 @@ function App() {
   const [correctCount,setCorrectCount] = useState(0)
   const [time,setTime] = useState(-6)
   const [playersProgress,setPlayersProgress] = useState([])
+  const [displayLB,setDisplayLB] = useState(false)
+  const [ranks,setRanks] = useState([])
   let startTime = 0
   let playerList = {}
+  let clockInterval
   
   useEffect(()=>{
     const getPlayers=async()=>{
@@ -29,6 +33,11 @@ function App() {
     getPlayers()
   },[])
 
+  useEffect(()=>{
+    if(displayLB===true){
+      socket.emit('finished',user)
+    }
+  },[displayLB])
 
   const sendNewUser=(user)=>{
     socket.emit('newUser',user)
@@ -37,12 +46,15 @@ function App() {
 
   const checkClock=()=>{
     const currTime = new Date()[Symbol.toPrimitive]('number')
-    const timeElapsed = Math.floor((currTime-startTime)/1000)
+    const timeElapsed = Math.floor((currTime-startTime)/1000)+125
     setTime(timeElapsed-5)
   }
 
   const sendProgress=(wpm)=>{
     socket.emit('progress',[lobby,user,wpm])
+  }
+
+  const sendFinish=()=>{
   }
 
   socket.once('ipCheck',(username)=>{
@@ -67,8 +79,7 @@ function App() {
   socket.on('startGame',()=>{
     startTime = new Date()[Symbol.toPrimitive]('number')
     setTime(-5)
-    setInterval(checkClock,1000);
-    setTimeout(()=>{socket.emit('gameStart')},7000);
+    clockInterval = setInterval(checkClock,1000)
     console.log('starting game in 5s')
   })
 
@@ -76,26 +87,43 @@ function App() {
     setPlayersProgress(response)
   })
 
+  socket.on('ranks',(response)=>{
+    setRanks(response)
+    console.log(response)
+  })
+
+
+  if(displayLB===true){
+    clearInterval(clockInterval)
+  }
   return (
     <div>
       <h1>TypeTrain</h1>
-      {
-        user===''?
-          <UsernameInput playerList={playerList} setUser={setUser} sendNewUser={sendNewUser}/>:
+      {user===''?
+        <UsernameInput playerList={playerList} setUser={setUser} sendNewUser={sendNewUser}/>:
           <Game paragraph={paragraph}
-          setParagraph={setParagraph}
-          wordP={wordP}
-          setWordP={setWordP}
-          charP={charP}
-          setCharP={setCharP}
-          charCount={charCount}
-          setCharCount={setCharCount}
-          correctCount={correctCount}
-          setCorrectCount={setCorrectCount}
-          time={time}
-          sendProgress={sendProgress}
-          playersProgress={playersProgress}
-          />
+            setParagraph={setParagraph}
+            wordP={wordP}
+            setWordP={setWordP}
+            charP={charP}
+            setCharP={setCharP}
+            charCount={charCount}
+            setCharCount={setCharCount}
+            correctCount={correctCount}
+            setCorrectCount={setCorrectCount}
+            time={time}
+            sendProgress={sendProgress}
+            playersProgress={playersProgress}
+            user={user}
+            setDisplayLB={setDisplayLB}
+            sendFinish={sendFinish}
+            />
+      }
+      {displayLB===true&&
+            <Leaderboard
+              ranks={ranks}
+              user={user}
+            />
       }
     </div>
   )

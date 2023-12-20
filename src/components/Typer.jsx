@@ -1,4 +1,5 @@
-export default function Typer({paragraph,setParagraph,wordP,setWordP,charP,setCharP,charCount,setCharCount,correctCount,setCorrectCount}){
+export default function Typer({paragraph,setParagraph,wordP,setWordP,charP,setCharP,charCount,setCharCount,correctCount,setCorrectCount,setDisplayLB,
+    sendFinish={sendFinish}}){
     let textManip=[...paragraph]
     const type=(event)=>{
         if(event.key.length>1&&event.key!=='Backspace'){
@@ -8,6 +9,11 @@ export default function Typer({paragraph,setParagraph,wordP,setWordP,charP,setCh
             setWordP(wordP+1)
             setCharP(0)
             event.target.value=''
+            console.log(`wordP: ${wordP}, paragraph.length: ${paragraph.length}`)
+            if(wordP===paragraph.length){
+                setDisplayLB(true)
+                sendFinish()
+            }
             if(charP<paragraph[wordP].length){
                 setCharCount(charCount+(paragraph[wordP].length-charP))
             }
@@ -51,7 +57,7 @@ export default function Typer({paragraph,setParagraph,wordP,setWordP,charP,setCh
                             ))
                             return (<span className="textBlock">{wordArr} </span>)
                         }):
-                        console.log('no past words')
+                        console.log('')
                 }
                 {/* current word */}
                 {

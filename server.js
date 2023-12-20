@@ -27,7 +27,6 @@ const currLobbys=[
     }
 ]
 
-
 const init=()=>{
     socketEvents()
 
@@ -53,18 +52,25 @@ const socketEvents=()=>{
     io.on('connection',async(socket)=>{
         const clientIP = socket.handshake.address
         let room
+        let dataInterval
 
         //checking for existing username with IP
         const username = await checkIP(clientIP)
         socket.emit('ipCheck',username)
         if(username!==null){
             room = joinLobby(username,socket)
+            dataInterval = setInterval(()=>{
+                io.to(room).emit('progress',currLobbys[room].players)
+            },2000)
         }
 
         //creating a new user in database
         socket.once('newUser',(username)=>{
             createUser(username,clientIP)
             room = joinLobby(username,socket)
+            dataInterval = setInterval(()=>{
+                io.to(room).emit('progress',currLobbys[room].players)
+            },2000)
         })
 
         // updating players on other players' progress
@@ -72,12 +78,13 @@ const socketEvents=()=>{
             currLobbys[data[0]].players[data[1]]=data[2]
         })
 
-        socket.on('gameStart',()=>{
-            console.log('gameStart received')
-            console.log(currLobbys[room].players)
-            setInterval(()=>{
-                io.to(room).emit('progress',currLobbys[room].players)
-            },2000)
+        socket.on('finished',(user)=>{
+            console.log(user)
+            clearInterval(dataInterval)
+            pool.query(`update players set wpm=${currLobbys[room].players[user]} where username='${user}'`)
+            .then(pool.query(`select username,wpm from players order by wpm desc`)
+                .then(result=>(socket.emit('ranks',result.rows)))
+            )
         })
 
         // disconnect closure

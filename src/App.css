@@ -4,3 +4,12 @@
 .wrongChar{
     background-color: red;
 }
+.leaderBoard{
+    position:fixed;
+    margin:auto;
+    height:50%;
+    width:50%;
+    background-color: gray;
+    opacity: 0.5;
+    color: black
+}
