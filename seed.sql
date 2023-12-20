@@ -8,12 +8,12 @@ create table players(
     IP varchar
 );
 
-insert into players (username,rank,wpm,IP) values (
+insert into players (username,wpm,IP) values (
     'guest3425',
     60,
     '1a2b3c4d'
 );
-insert into players (username,rank,wpm,IP) values (
+insert into players (username,wpm,IP) values (
     'guest6345',
     60,
     '9z8y7x6w'

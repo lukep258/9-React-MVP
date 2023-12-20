@@ -98,7 +98,7 @@ function App() {
 
   return (
     <div>
-      <h1>TypeTrain</h1>
+      <div id='titleContainer'><h1 id='title'>TypeTrain</h1></div>
       {user===''?
         <UsernameInput playerList={playerList} setUser={setUser} sendNewUser={sendNewUser}/>:
           <Game paragraph={paragraph}

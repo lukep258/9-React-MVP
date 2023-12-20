@@ -100,8 +100,10 @@ const socketEvents=()=>{
         socket.on('disconnect',()=>{
             pool.query(`select username from players where IP='${clientIP}'`)
             .then(result=>{
-                delete currLobbys[room].players[result.rows[0].username]
-                console.log(`removing ${result.rows[0].username} from lobby ${room}`)
+                if(room){
+                    delete currLobbys[room].players[result.rows[0].username]
+                    console.log(`removing ${result.rows[0].username} from lobby ${room}`)
+                }
             })
             
         })

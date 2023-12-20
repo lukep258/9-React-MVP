@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node server.js",
+    "build": "vite build",
+    "devBuild":"vite build && node server.js",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "start": "nodemon --watch server.js --watch src --ext js,jsx --exec npm run build"
+    "start": "nodemon --watch server.js --watch src --ext js,jsx --exec npm run devBuild"
   },
   "dependencies": {
     "dotenv": "^16.3.1",
