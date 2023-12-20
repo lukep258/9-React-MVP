@@ -375,8 +375,8 @@ him! He walked here, and he walked there, fancying himself so very
 great! Not handsome enough to dance with! I wish you had been there, my
 dear, to have given him one of your set-downs. I quite detest the man.”
 `
-    const PnParr = PnPtxt.split(/\s+/)
+    const PnParr = PnPtxt.split(/[\n\s\t”“\_\-]+/)
     const startI = Math.floor(Math.random()*3000)
-    const returnArr = PnParr.slice(startI,startI+300)
+    const returnArr = PnParr.slice(startI,startI+100)
     return returnArr
 }

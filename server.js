@@ -17,12 +17,12 @@ app.use(express.static('dist'))
 const currLobbys=[
     {
         pCount:2,
-        players:['guest3425','guest6345'],
+        players:{'guest3425':0,'guest6345':0},
         inSession:true
     },
     {
         pCount:0,
-        players:[],
+        players:{},
         inSession:true
     }
 ]
@@ -38,9 +38,6 @@ const init=()=>{
 
 const userIP=()=>{
     app.get('/players',(req,res)=>{
-        const paramsArr=req.url.split('/')
-        console.log('paramsArr:',paramsArr)
-        
         pool.query('select * from players')
         .then(result=>{
             const pIPObj={}
@@ -55,22 +52,41 @@ const userIP=()=>{
 const socketEvents=()=>{
     io.on('connection',async(socket)=>{
         const clientIP = socket.handshake.address
+        let room
 
         //checking for existing username with IP
         const username = await checkIP(clientIP)
         socket.emit('ipCheck',username)
         if(username!==null){
-            joinLobby(username,socket)
+            room = joinLobby(username,socket)
         }
 
         //creating a new user in database
         socket.on('newUser',(username)=>{
             createUser(username,clientIP)
-            joinLobby(username,socket)
+            room = joinLobby(username,socket)
         })
 
-        socket.on('test',()=>{
-            socket.emit('good test')
+        // updating players on other players' progress
+        socket.on('progress',(data)=>{
+            currLobbys[data[0]].players[data[1]]=data[2]
+        })
+
+        socket.on('gameStart',()=>{
+            console.log(room)
+            setInterval(()=>{
+                io.to(room).emit('progress',currLobbys[room].players)
+            },2000)
+        })
+
+        // disconnect closure
+        socket.on('disconnect',()=>{
+            pool.query(`select username from players where IP='${clientIP}'`)
+            .then(result=>{
+                delete currLobbys[room].players[result.rows[0].username]
+                console.log(`removing ${result.rows[0].username} from lobby ${room}`)
+            })
+            
         })
     })
 }
@@ -112,10 +128,22 @@ const createUser=(username,IP)=>{
 
 const joinLobby=(username,socket)=>{
     const joiningLobby=findLobby()
-    currLobbys[joiningLobby].players.push(username)
+    currLobbys[joiningLobby].players[username]=0
+    currLobbys[joiningLobby].pCount++
+    socket.join(joiningLobby)
+
     const send = [joiningLobby,randomText()]
     socket.emit('lobbyJoin',send)
     console.log(`${username} joining lobby ${joiningLobby}`)
+    console.log(`lobby players: ${currLobbys[joiningLobby].players}`)
+
+    if(currLobbys[joiningLobby].pCount>0){
+        io.to(joiningLobby).emit('startGame')
+        setTimeout(()=>{currLobbys[joiningLobby].inSession=true},4000)
+        console.log(`starting game in lobby ${joiningLobby} in 5s`)
+    }
+
+    return joiningLobby
 }
 
 const newPool=()=>{
